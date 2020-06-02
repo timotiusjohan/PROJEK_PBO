@@ -1,22 +1,33 @@
 import java.util.Scanner;
 public class Main {
 	private static customer custBaru=new customer();
-	//private static Film filmBaru=new Film();
+	
 	public static void main(String[] args) {
+		new Main();
+		Main.menu();
+	}
+	public static void menu() {
+		boolean stop=false;
 		Scanner sc = new Scanner(System.in);
-	        try {
+		while(stop==false) {
+			try {
 	            System.out.println("---Selamat datang di O-Tic---");
 	            System.out.print("Sudah punya akun?(Yes/No): ");
 	            String yesno=sc.nextLine();
 	            if(yesno.equals("Yes")) {
 	            	custBaru=custBaru.Login();
-	            	custBaru.beliTiket();
-	            }else {
+	            	custBaru.Menu();
+	            }else if(yesno.equals("No")){
 	            	custBaru.Registrasi();
+	            }else {
+	            	System.out.println("Maaf, input anda tidak valid. Harap masukkan sesuai dengan ketentuan");
+	            	menu();
 	            }
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
+		}
+		
 	}
 
 }

@@ -49,6 +49,10 @@ public class customer implements Serializable {
 		return idCustomer;
 	}
 	
+	public void Menu() {
+		
+	}
+	
 	public customer Login() {
 		customer baru=null;
 		try {

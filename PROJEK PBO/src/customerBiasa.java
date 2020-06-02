@@ -24,15 +24,44 @@ public class customerBiasa extends customer implements Serializable {
     
     private static Film film=new Film();
     
-    private transient Scanner sc;
 	public customerBiasa(String nama, String HP, String email, String password) {
 		super(nama, HP, email, password);
 		// TODO Auto-generated constructor stub
 	}
 	
+	public void Menu() {
+		try {
+			Scanner sc=new Scanner(System.in);
+			System.out.println("---Selamat Datang Di Menu Utama O-Tic---");
+			System.out.println("1. Beli tiket");
+			System.out.println("2. Upgrade Premium");
+			System.out.println("3. Logout");
+			System.out.print("Pilihan anda: ");
+			int inputanMenu=sc.nextInt();
+			
+			if(inputanMenu==1) {
+				this.beliTiket();
+			}else if(inputanMenu==2) {
+				this.upgradePremium();
+			}else if(inputanMenu==3) {
+				Main.menu();
+			}else {
+				System.out.println("Maaf, kami tidak dapat memproses input anda silahkan masukkan pilihan sesuai dengan menu yang tersedia");
+				Menu();
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void upgradePremium() {
+		
+	}
+	
 	
 	//fitur untuk beli tiket
 	public void beliTiket() {
+		Scanner sc = new Scanner(System.in);
 		Film filmDipilih=null;
 		List<String> tanggal = new ArrayList<String>();
 		List<String> jam = new ArrayList<String>();

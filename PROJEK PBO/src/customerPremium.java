@@ -26,12 +26,13 @@ public class customerPremium extends customer implements Serializable{
     
     private static Film film=new Film();
     
-    private transient Scanner sc;
+
 	public customerPremium(String nama, String HP, String email, String password,double ktp) {
 		super(nama, HP, email, password);
 		this.ktp=ktp;
 	}
 	public void beliTiket() {
+		Scanner sc = new Scanner(System.in);
 		Film filmDipilih=null;
 		List<String> tanggal = new ArrayList<String>();
 		List<String> jam = new ArrayList<String>();
