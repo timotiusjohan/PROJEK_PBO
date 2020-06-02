@@ -90,27 +90,36 @@ public class customerBiasa extends customer implements Serializable {
 			}
 			System.out.println("Sinopsis: "+sinopsisBaru);
 			
-			System.out.println("Jadwal:");
-			ps=con.prepareStatement("SELECT DISTINCT jadwal.Tanggal FROM jadwal LEFT JOIN Film ON Film.idFilm=jadwal.idFilm WHERE jadwal.idFilm=? ");
-			ps.setInt(1, pilihan);
-			ResultSet rsTanggal = ps.executeQuery();
-			while(rsTanggal.next()) {
-			    SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");  
-			    String strDate = formatter.format(rsTanggal.getDate(1));   
-				System.out.println(strDate);
-				ps=con.prepareStatement("SELECT DISTINCT jadwal.Jam FROM jadwal LEFT JOIN Film ON Film.idFilm=jadwal.idFilm WHERE jadwal.idFilm=? ");
-				ps.setInt(1, pilihan);
-				ResultSet rsJam = ps.executeQuery();
-				while(rsJam.next()) {
-					System.out.print("       ");
-					System.out.print(rsJam.getString(1)+" ");
-				}
-				System.out.println();
-			}
-			
 			DecimalFormat df=new DecimalFormat("#.##");
 			String formatted=df.format(filmDipilih.getHarga());
 			System.out.println("Harga: Rp."+formatted);
+			
+			System.out.println("---Jadwal Tanggal Tayang---");
+			ps=con.prepareStatement("SELECT DISTINCT jadwal.Tanggal FROM jadwal LEFT JOIN Film ON Film.idFilm=jadwal.idFilm WHERE jadwal.idFilm=? ");
+			ps.setInt(1, pilihan);
+			ResultSet rsTanggal = ps.executeQuery();
+			int i=1;
+			while(rsTanggal.next()) {
+			    SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");  
+			    String strDate = formatter.format(rsTanggal.getDate(1));
+			    tanggal.add(strDate);
+				System.out.println(i+". "+strDate);
+			}
+			System.out.print("Silahkan pilih tanggal tayang yang tersedia: ");
+			int tanggalPilihan=sc.nextInt();
+			
+			System.out.println("---Jadwal Jam Tayang---");
+			ps=con.prepareStatement("SELECT DISTINCT jadwal.Jam FROM jadwal LEFT JOIN Film ON Film.idFilm=jadwal.idFilm WHERE jadwal.idFilm=? ");
+			ps.setInt(1, pilihan);
+			ResultSet rsJam = ps.executeQuery();
+			int j=1;
+			while(rsJam.next()) {
+				jam.add(rsJam.getString(1));
+				System.out.print(j+". "+rsJam.getString(1));
+			}
+			System.out.print("Silahkan pilih jam tayang yang tersedia: ");
+			int jamPilihan=sc.nextInt();
+			
 			
 		}catch(Exception e) {
 			e.printStackTrace();
