@@ -3,6 +3,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -55,6 +56,37 @@ public class customerBiasa extends customer implements Serializable {
 	}
 	
 	public void upgradePremium() {
+		try {
+			Class.forName(JDBC_DRIVER);
+			Connection con = null;
+			con = DriverManager.getConnection(url, user, password);
+			PreparedStatement ps = null;
+			
+			Scanner sc = new Scanner(System.in);
+			System.out.println("---Upgrade Premium---");
+			System.out.print("Silahkan masukkan nomor ktp anda: ");
+			BigInteger ktp = sc.nextBigInteger();
+			
+			customer premium = new customerPremium(this.getNama(),this.getNomorHandphone(),this.getEmail(),this.getPassword(),ktp);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos=new ObjectOutputStream(baos);
+            oos.writeObject(premium);
+            oos.flush();
+            oos.close();
+            baos.close();
+            byte[] data = baos.toByteArray();
+            ByteArrayInputStream bais = new ByteArrayInputStream(data);
+            
+			ps=con.prepareStatement("UPDATE `Customer` SET `NoKtp` = ?,CustObject = ? WHERE `Customer`.`idCustomer` = ?");
+			ps.setString(1, ktp.toString());
+			ps.setBinaryStream(2, bais, data.length);
+			ps.setInt(3, this.getIdCustomer());
+			ps.executeUpdate();
+			System.out.println("Anda telah berhasil upgrae menjadi premium");
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		
 	}
 	

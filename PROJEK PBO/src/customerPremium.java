@@ -3,6 +3,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 public class customerPremium extends customer implements Serializable{
-	private double ktp;
+	private BigInteger ktp;
 	
 	private static final long serialVersionUID = 1L;
 	private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -27,11 +28,33 @@ public class customerPremium extends customer implements Serializable{
     private static Film film=new Film();
     
 
-	public customerPremium(String nama, String HP, String email, String password,double ktp) {
+	public customerPremium(String nama, String HP, String email, String password,BigInteger ktp) {
 		super(nama, HP, email, password);
 		this.ktp=ktp;
 	}
+	public void Menu() {
+		try {
+			Scanner sc=new Scanner(System.in);
+			System.out.println("---Selamat Datang Di Menu Utama O-Tic---");
+			System.out.println("1. Beli tiket");
+			System.out.println("2. Logout");
+			System.out.print("Pilihan anda: ");
+			int inputanMenu=sc.nextInt();
+			
+			if(inputanMenu==1) {
+				this.beliTiket();
+			}else if(inputanMenu==2) {
+				Main.menu();
+			}else {
+				System.out.println("Maaf, kami tidak dapat memproses input anda silahkan masukkan pilihan sesuai dengan menu yang tersedia");
+				Menu();
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public void beliTiket() {
+		System.out.println("Selamat! anda mendapatkan potongan sebesar 50% untuk pembelian tiket kedua. Tidak berlaku kelipatan");
 		Scanner sc = new Scanner(System.in);
 		Film filmDipilih=null;
 		List<String> tanggal = new ArrayList<String>();
@@ -154,11 +177,11 @@ public class customerPremium extends customer implements Serializable{
 			}
 			
 			double totalbayar=0;
-			if(jumlahTiket>2) {
-				int sisa=jumlahTiket--;
+			if(jumlahTiket>=2) {
+				int sisa=--jumlahTiket;
 				totalbayar=(filmDipilih.getHarga()/2)+(sisa*filmDipilih.getHarga());
+				System.out.println(totalbayar);
 			}
-			
 			String formatTotal=df.format(totalbayar);
 			System.out.println("Total: Rp."+formatTotal);
 			System.out.print("Silahkan masukkan nominal sesuai dengan total bayar: Rp.");
@@ -212,6 +235,9 @@ public class customerPremium extends customer implements Serializable{
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public BigInteger getKtp() {
+		return ktp;
 	}
 
 }
