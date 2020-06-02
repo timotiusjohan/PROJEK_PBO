@@ -13,6 +13,7 @@ public class customer implements Serializable {
 	private String Email;
 	private String Password;
 	private Scanner sc;
+	private static int idCustomer;
 	
 	public customer() {
 		
@@ -44,6 +45,9 @@ public class customer implements Serializable {
 	public String getPassword() {
 		return Password;
 	}
+	public int getIdCustomer() {
+		return idCustomer;
+	}
 	
 	public customer Login() {
 		customer baru=null;
@@ -59,17 +63,19 @@ public class customer implements Serializable {
         	String Email = sc.nextLine();
         	System.out.print("Password: ");
         	String Password = sc.nextLine();
-        	ps=con.prepareStatement("SELECT CustObject FROM Customer WHERE Email=? AND Password=?");
+        	ps=con.prepareStatement("SELECT CustObject,idCustomer FROM Customer WHERE Email=? AND Password=?");
         	ps.setString(1, Email);
         	ps.setString(2, Password);
         	ResultSet rs = ps.executeQuery();
         	int rowCount = 0;
         	while(rs.next()) {
         		rowCount++;
-        		byte[] st = (byte[])rs.getObject(1);
+        		byte[] st = (byte[])rs.getObject("CustObject");
             	ByteArrayInputStream bais = new ByteArrayInputStream(st);
             	ObjectInputStream ois = new ObjectInputStream(bais);
             	baru = (customer) ois.readObject(); 
+            	customer.idCustomer=rs.getInt("idCustomer");
+            	
         	}
         	if(rowCount==1) {
         		System.out.println("Login Sukses");
@@ -131,4 +137,8 @@ public class customer implements Serializable {
 			e.printStackTrace();
 		}
 	}
+
+	
+
+	
 }

@@ -1,9 +1,20 @@
-import java.io.*;
-import java.sql.*;
-import java.util.*;
-import java.text.*;
-
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
 public class customerBiasa extends customer implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -13,7 +24,7 @@ public class customerBiasa extends customer implements Serializable {
     
     private static Film film=new Film();
     
-    private Scanner sc;
+    private transient Scanner sc;
 	public customerBiasa(String nama, String HP, String email, String password) {
 		super(nama, HP, email, password);
 		// TODO Auto-generated constructor stub
@@ -26,6 +37,7 @@ public class customerBiasa extends customer implements Serializable {
 		List<String> tanggal = new ArrayList<String>();
 		List<String> jam = new ArrayList<String>();
 		List<String> kursi = new ArrayList<String>(Arrays.asList("A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","B1","B2","B3","B4","B5","B6","B7","B8","B9","B10","C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","E1","E2","E3","E4","E5","E6","E7","E8","E9","E10"));
+		List<String> nomorKursi = new ArrayList<String>();
 		try {
 			//connect ke database
 			Class.forName(JDBC_DRIVER);
@@ -104,6 +116,7 @@ public class customerBiasa extends customer implements Serializable {
 			    String strDate = formatter.format(rsTanggal.getDate(1));
 			    tanggal.add(strDate);
 				System.out.println(i+". "+strDate);
+				i++;
 			}
 			System.out.print("Silahkan pilih tanggal tayang yang tersedia: ");
 			int tanggalPilihan=sc.nextInt();
@@ -115,12 +128,81 @@ public class customerBiasa extends customer implements Serializable {
 			int j=1;
 			while(rsJam.next()) {
 				jam.add(rsJam.getString(1));
-				System.out.print(j+". "+rsJam.getString(1));
+				System.out.println(j+". "+rsJam.getString(1));
+				j++;
 			}
 			System.out.print("Silahkan pilih jam tayang yang tersedia: ");
 			int jamPilihan=sc.nextInt();
 			
+			System.out.print("Masukkan jumlah tiket yang ingin anda beli: ");
+			int jumlahTiket=sc.nextInt();
+			sc.nextLine();
+			for(int z=0;z<jumlahTiket;z++) {
+				for(int q=0;q<kursi.size();q++) {
+					if(q%5==0) {
+						System.out.println();
+						System.out.print(kursi.get(q)+" ");
+					}else {
+						System.out.print(" "+kursi.get(q)+" ");
+					}
+				}
+				System.out.println();
+				
+				System.out.print("Silahkan pilih tempat duduk untuk tiket ke-"+(z+1)+": ");
+				String tempatduduk=sc.nextLine();
+				nomorKursi.add(tempatduduk);
+			}
+			double totalbayar = filmDipilih.getHarga()*jumlahTiket;
+			String formatTotal=df.format(totalbayar);
+			System.out.println("Total: Rp."+formatTotal);
+			System.out.print("Silahkan masukkan nominal sesuai dengan total bayar: Rp.");
+			double bayar=sc.nextDouble();
 			
+			DateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+			Date dateobj = new Date();
+			String tanggalTransaksi=format.format(dateobj);
+			
+			int tgl=tanggalPilihan-1;
+			int jm=jamPilihan-1;
+			int jml=jumlahTiket;
+			Transaksi baru = new Transaksi(jml,filmDipilih,this,totalbayar,tanggal.get(tgl),jam.get(jm),tanggalTransaksi);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos=new ObjectOutputStream(baos);
+            oos.writeObject(baru);
+            oos.flush();
+            oos.close();
+            baos.close();
+            byte[] data = baos.toByteArray();
+            ByteArrayInputStream bais = new ByteArrayInputStream(data);
+			
+            
+            ps=con.prepareStatement("INSERT INTO Transaksi(idCustomer,idFilm,tanggal,jam,jumlahTiket,totalBayar,WaktuTransaksi,TransObjek) VALUES(?,?,?,?,?,?,?,?)");
+            ps.setInt(1, this.getIdCustomer());
+            ps.setInt(2, pilihan);
+            ps.setString(3, baru.getTanggal());
+            ps.setString(4, baru.getJam());
+            ps.setInt(5, baru.getJumlahTiket());
+            ps.setDouble(6, baru.getTotalBayar());
+            ps.setString(7, tanggalTransaksi);
+            ps.setBinaryStream(8, bais, data.length);
+            ps.executeUpdate();
+            
+            ps=con.prepareStatement("SELECT kodeTransaksi FROM Transaksi WHERE WaktuTransaksi=?");
+			ps.setString(1, tanggalTransaksi);
+			ResultSet rs = ps.executeQuery();
+			int kodeTransaksi=0;
+			while(rs.next()) {
+				kodeTransaksi = rs.getInt(1);
+			}
+			int w=0;
+            while(w<nomorKursi.size()){
+            	ps=con.prepareStatement("INSERT INTO kursi(kodeTransaksi,nomorKursi) VALUES(?,?)");
+                ps.setInt(1, kodeTransaksi);
+                ps.setString(2, nomorKursi.get(w));
+                ps.executeUpdate();
+                w++;
+            }
+            
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
