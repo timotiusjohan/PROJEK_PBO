@@ -36,7 +36,8 @@ public class customerBiasa extends customer implements Serializable {
 			System.out.println("---Selamat Datang Di Menu Utama O-Tic---");
 			System.out.println("1. Beli tiket");
 			System.out.println("2. Upgrade Premium");
-			System.out.println("3. Logout");
+			System.out.println("3. Cetak Tiket");
+			System.out.println("4. Logout");
 			System.out.print("Pilihan anda: ");
 			int inputanMenu=sc.nextInt();
 			
@@ -45,6 +46,8 @@ public class customerBiasa extends customer implements Serializable {
 			}else if(inputanMenu==2) {
 				this.upgradePremium();
 			}else if(inputanMenu==3) {
+				this.cetakFilm();
+			}else if(inputanMenu==4){
 				Main.menu();
 			}else {
 				System.out.println("Maaf, kami tidak dapat memproses input anda silahkan masukkan pilihan sesuai dengan menu yang tersedia");
@@ -54,7 +57,26 @@ public class customerBiasa extends customer implements Serializable {
 			e.printStackTrace();
 		}
 	}
-	
+	public void cetakFilm() {
+		try {
+			Class.forName(JDBC_DRIVER);
+			Connection con = null;
+			con = DriverManager.getConnection(url, user, password);
+			PreparedStatement ps = null;
+			
+			ps=con.prepareStatement("SELECT * FROM 	Transaksi WHERE idCustomer=?");
+			ps.setInt(1, this.getIdCustomer());
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				
+			}
+			Scanner sc = new Scanner(System.in);
+			System.out.println("---Tiket yang telah dibeli---");
+			
+		}catch(Exception e) {
+			
+		}
+	}
 	public void upgradePremium() {
 		try {
 			Class.forName(JDBC_DRIVER);

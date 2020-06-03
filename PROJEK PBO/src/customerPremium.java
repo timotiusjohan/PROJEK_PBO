@@ -204,7 +204,7 @@ public class customerPremium extends customer implements Serializable{
             byte[] data = baos.toByteArray();
             ByteArrayInputStream bais = new ByteArrayInputStream(data);
 			
-            
+            jumlahTiket++;
             ps=con.prepareStatement("INSERT INTO Transaksi(idCustomer,idFilm,tanggal,jam,jumlahTiket,totalBayar,WaktuTransaksi,TransObjek) VALUES(?,?,?,?,?,?,?,?)");
             ps.setInt(1, this.getIdCustomer());
             ps.setInt(2, pilihan);
