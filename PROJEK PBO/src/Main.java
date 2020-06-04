@@ -23,8 +23,9 @@ public class Main {
 	            	System.out.println("Maaf, input anda tidak valid. Harap masukkan sesuai dengan ketentuan");
 	            	menu();
 	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
+	        } catch (NullPointerException e) {
+	            System.out.println("Login gagal. Harap periksa kembali email dan password anda dan lakukan login ulang");
+	            custBaru=new customer();
 	        }
 		}
 		

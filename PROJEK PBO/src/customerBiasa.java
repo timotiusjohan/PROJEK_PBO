@@ -43,10 +43,13 @@ public class customerBiasa extends customer implements Serializable {
 			
 			if(inputanMenu==1) {
 				this.beliTiket();
+				Menu();
 			}else if(inputanMenu==2) {
 				this.upgradePremium();
+				Main.menu();
 			}else if(inputanMenu==3) {
-				this.cetakFilm();
+				super.cetakFilm();
+				Menu();
 			}else if(inputanMenu==4){
 				Main.menu();
 			}else {
@@ -55,26 +58,6 @@ public class customerBiasa extends customer implements Serializable {
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
-		}
-	}
-	public void cetakFilm() {
-		try {
-			Class.forName(JDBC_DRIVER);
-			Connection con = null;
-			con = DriverManager.getConnection(url, user, password);
-			PreparedStatement ps = null;
-			
-			ps=con.prepareStatement("SELECT * FROM 	Transaksi WHERE idCustomer=?");
-			ps.setInt(1, this.getIdCustomer());
-			ResultSet rs = ps.executeQuery();
-			while(rs.next()) {
-				
-			}
-			Scanner sc = new Scanner(System.in);
-			System.out.println("---Tiket yang telah dibeli---");
-			
-		}catch(Exception e) {
-			
 		}
 	}
 	public void upgradePremium() {
@@ -104,7 +87,7 @@ public class customerBiasa extends customer implements Serializable {
 			ps.setBinaryStream(2, bais, data.length);
 			ps.setInt(3, this.getIdCustomer());
 			ps.executeUpdate();
-			System.out.println("Anda telah berhasil upgrae menjadi premium");
+			System.out.println("Anda telah berhasil upgrae menjadi premium. Silahkan login kembali untuk dapat menikmati akun premium anda");
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -285,6 +268,7 @@ public class customerBiasa extends customer implements Serializable {
                 ps.executeUpdate();
                 w++;
             }
+            System.out.println("Tiket berhasil dibeli");
             
 		}catch(Exception e) {
 			e.printStackTrace();

@@ -53,6 +53,36 @@ public class customer implements Serializable {
 		
 	}
 	
+	public void cetakFilm() {
+		try {
+			Class.forName(JDBC_DRIVER);
+			Connection con = null;
+			con = DriverManager.getConnection(url, user, password);
+			PreparedStatement ps = null;
+			
+			ps=con.prepareStatement("SELECT * FROM `Transaksi` INNER JOIN Film ON Transaksi.idFilm=Film.idFilm INNER JOIN kursi ON kursi.kodeTransaksi=Transaksi.kodeTransaksi WHERE idCustomer=?");
+			ps.setInt(1, this.getIdCustomer());
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()==false) {
+				System.out.println("Maaf, anda belum membeli tiket. Harap membeli tiket terlebih dahulu");
+				System.out.println();
+			}else {
+				do{
+					System.out.println("===================================TIKET===================================");
+					System.out.println("| "+rs.getString("Judul"));
+					System.out.println("| Tanggal	 : "+rs.getString("tanggal"));
+					System.out.println("| Jam		 : "+rs.getString("jam"));
+					System.out.println("| Nomor Kursi    : "+rs.getString("nomorKursi"));
+					System.out.println("| Harga          : "+rs.getString("Harga"));
+					System.out.println("===================================TIKET===================================");
+				}while(rs.next()); 
+			}
+			
+		}catch(Exception e) {
+			
+		}
+	}
+	
 	public customer Login() {
 		customer baru=null;
 		try {
@@ -78,15 +108,9 @@ public class customer implements Serializable {
             	ByteArrayInputStream bais = new ByteArrayInputStream(st);
             	ObjectInputStream ois = new ObjectInputStream(bais);
             	baru = (customer) ois.readObject(); 
-            	customer.idCustomer=rs.getInt("idCustomer");
-            	
+            	customer.idCustomer=rs.getInt("idCustomer");	
         	}
-        	if(rowCount==1) {
-        		System.out.println("Login Sukses");
-        		con.close();
-        	}else {
-        		System.out.println("Login Gagal");
-        	}
+        	
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,7 +158,7 @@ public class customer implements Serializable {
             ps.setString(4, Password);
             ps.setBinaryStream(5, bais, data.length);
             ps.executeUpdate();
-            System.out.println("Berhasil Insert");
+            System.out.println("Registrasi anda telah berhasil silahkan lakukan login");
             con.close();
             
 		}catch(Exception e) {

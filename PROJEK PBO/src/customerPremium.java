@@ -37,13 +37,18 @@ public class customerPremium extends customer implements Serializable{
 			Scanner sc=new Scanner(System.in);
 			System.out.println("---Selamat Datang Di Menu Utama O-Tic---");
 			System.out.println("1. Beli tiket");
-			System.out.println("2. Logout");
+			System.out.println("2. Cetak tiket");
+			System.out.println("3. Logout");
 			System.out.print("Pilihan anda: ");
 			int inputanMenu=sc.nextInt();
 			
 			if(inputanMenu==1) {
 				this.beliTiket();
+				Menu();
 			}else if(inputanMenu==2) {
+				super.cetakFilm();
+				Menu();
+			}else if(inputanMenu==3){
 				Main.menu();
 			}else {
 				System.out.println("Maaf, kami tidak dapat memproses input anda silahkan masukkan pilihan sesuai dengan menu yang tersedia");
