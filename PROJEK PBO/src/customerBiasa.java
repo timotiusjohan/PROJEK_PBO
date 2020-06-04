@@ -188,13 +188,13 @@ public class customerBiasa extends customer implements Serializable {
 			int tanggalPilihan=sc.nextInt();
 			
 			System.out.println("---Jadwal Jam Tayang---");
-			ps=con.prepareStatement("SELECT DISTINCT jadwal.Jam FROM jadwal LEFT JOIN Film ON Film.idFilm=jadwal.idFilm WHERE jadwal.idFilm=? ");
+			ps=con.prepareStatement("SELECT DISTINCT jadwal.Jam,jadwal.Studio FROM jadwal LEFT JOIN Film ON Film.idFilm=jadwal.idFilm WHERE jadwal.idFilm=? ");
 			ps.setInt(1, pilihan);
 			ResultSet rsJam = ps.executeQuery();
 			int j=1;
 			while(rsJam.next()) {
 				jam.add(rsJam.getString(1));
-				System.out.println(j+". "+rsJam.getString(1));
+				System.out.println(j+". "+rsJam.getString(1)+"		Studio: "+rsJam.getInt(2));
 				j++;
 			}
 			System.out.print("Silahkan pilih jam tayang yang tersedia: ");
@@ -204,6 +204,7 @@ public class customerBiasa extends customer implements Serializable {
 			int jumlahTiket=sc.nextInt();
 			sc.nextLine();
 			for(int z=0;z<jumlahTiket;z++) {
+				System.out.println("======Layar Bioskop======");
 				for(int q=0;q<kursi.size();q++) {
 					if(q%5==0) {
 						System.out.println();
@@ -231,7 +232,7 @@ public class customerBiasa extends customer implements Serializable {
 			int tgl=tanggalPilihan-1;
 			int jm=jamPilihan-1;
 			int jml=jumlahTiket;
-			Transaksi baru = new Transaksi(jml,filmDipilih,this,totalbayar,tanggal.get(tgl),jam.get(jm),tanggalTransaksi);
+			Transaksi baru = new Transaksi(jml,filmDipilih,this,totalbayar,tanggal.get(tgl),jam.get(jm),tanggalTransaksi,pilihan);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos=new ObjectOutputStream(baos);
             oos.writeObject(baru);
@@ -242,7 +243,7 @@ public class customerBiasa extends customer implements Serializable {
             ByteArrayInputStream bais = new ByteArrayInputStream(data);
 			
             
-            ps=con.prepareStatement("INSERT INTO Transaksi(idCustomer,idFilm,tanggal,jam,jumlahTiket,totalBayar,WaktuTransaksi,TransObjek) VALUES(?,?,?,?,?,?,?,?)");
+            ps=con.prepareStatement("INSERT INTO Transaksi(idCustomer,idFilm,tanggal,jam,jumlahTiket,totalBayar,WaktuTransaksi,TransObjek,studio) VALUES(?,?,?,?,?,?,?,?,?)");
             ps.setInt(1, this.getIdCustomer());
             ps.setInt(2, pilihan);
             ps.setString(3, baru.getTanggal());
@@ -251,6 +252,7 @@ public class customerBiasa extends customer implements Serializable {
             ps.setDouble(6, baru.getTotalBayar());
             ps.setString(7, tanggalTransaksi);
             ps.setBinaryStream(8, bais, data.length);
+            ps.setInt(9, pilihan);
             ps.executeUpdate();
             
             ps=con.prepareStatement("SELECT kodeTransaksi FROM Transaksi WHERE WaktuTransaksi=?");

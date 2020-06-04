@@ -9,6 +9,7 @@ public class Transaksi implements Serializable{
 	private Film FilmDipilih;
 	private customer Customer;
 	private String tanggalTransaksi;
+	private int Studio;
 	
 	public String getTanggalTransaksi() {
 		return tanggalTransaksi;
@@ -37,7 +38,13 @@ public class Transaksi implements Serializable{
 	public customer getCustomer() {
 		return Customer;
 	}
-	public Transaksi(int jmlTiket,Film film,customer Customer,double totalbayar,String Tanggal,String jam,String tanggaltransaksi) {
+	
+
+	public int getStudio() {
+		return Studio;
+	}
+
+	public Transaksi(int jmlTiket,Film film,customer Customer,double totalbayar,String Tanggal,String jam,String tanggaltransaksi,int studio) {
 		this.JumlahTiket=jmlTiket;
 		this.FilmDipilih=film;
 		this.Customer=Customer;
@@ -45,5 +52,6 @@ public class Transaksi implements Serializable{
 		this.Tanggal=Tanggal;
 		this.jam=jam;
 		this.tanggalTransaksi=tanggaltransaksi;
+		this.Studio=studio;
 	}
 }

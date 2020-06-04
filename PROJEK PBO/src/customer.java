@@ -74,6 +74,7 @@ public class customer implements Serializable {
 					System.out.println("| Jam		 : "+rs.getString("jam"));
 					System.out.println("| Nomor Kursi    : "+rs.getString("nomorKursi"));
 					System.out.println("| Harga          : "+rs.getString("Harga"));
+					System.out.println("| Studio         : "+rs.getInt("studio"));
 					System.out.println("===================================TIKET===================================");
 				}while(rs.next()); 
 			}
