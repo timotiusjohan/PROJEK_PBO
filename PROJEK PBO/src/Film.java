@@ -28,7 +28,8 @@ public class Film implements Serializable{
 		this.Harga=harga;
 	}
 	
-	public void selectFilm() {
+	public int selectFilm() {
+		int i=0;
 		Film select=null;
 		try {
 			Class.forName(JDBC_DRIVER);
@@ -38,18 +39,18 @@ public class Film implements Serializable{
 			
 			ps=con.prepareStatement("SELECT FilmObject FROM `Film` ");
 			ResultSet rs = ps.executeQuery();
-			int i=1;
 			while(rs.next()) {
 				byte[] st = (byte[])rs.getObject(1);
             	ByteArrayInputStream bais = new ByteArrayInputStream(st);
             	ObjectInputStream ois = new ObjectInputStream(bais);
             	select = (Film) ois.readObject();
-            	System.out.println(i+". "+select.getJudul());
             	i++;
+            	System.out.println(i+". "+select.getJudul());
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		return i;
 	}
 	
 	public void tambahFilm() {

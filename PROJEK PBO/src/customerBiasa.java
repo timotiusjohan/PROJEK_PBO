@@ -38,7 +38,7 @@ public class customerBiasa extends customer implements Serializable {
 			System.out.println("2. Upgrade Premium");
 			System.out.println("3. Cetak Tiket");
 			System.out.println("4. Logout");
-			System.out.print("Pilihan anda: ");
+			System.out.print("Pilihan anda (1-3): ");
 			int inputanMenu=sc.nextInt();
 			
 			if(inputanMenu==1) {
@@ -114,12 +114,18 @@ public class customerBiasa extends customer implements Serializable {
 			//untuk menampilkan film yang tersedia dengan select dari database
 			sc = new Scanner(System.in);
 			System.out.println("---Film Tersedia---");
-			film.selectFilm();
+			int jumlahfilm=film.selectFilm();
 			
 			//untuk memilih film yang akan di tonton lalu menampikan detil dari film tersebut
-			System.out.print("Anda ingin menonton film nomor: ");
+			System.out.print("Anda ingin menonton film nomor (1-"+jumlahfilm+"): ");
 			int pilihan = sc.nextInt();
-			
+			if(pilihan>jumlahfilm||pilihan<1) {
+				while(pilihan>jumlahfilm||pilihan<1) {
+					System.out.println("harap masukkan sesuai dengan pilihan yang tersedia");
+					System.out.print("Anda ingin menonton film nomor (1-"+jumlahfilm+"): ");
+					pilihan=sc.nextInt();
+				}
+			}
 			//select dari database
 			ps=con.prepareStatement("SELECT FilmObject FROM Film WHERE idFilm=?");
 			ps.setInt(1, pilihan);
@@ -172,41 +178,57 @@ public class customerBiasa extends customer implements Serializable {
 			String formatted=df.format(filmDipilih.getHarga());
 			System.out.println("Harga: Rp."+formatted);
 			
+			int tanggalPilihan=0;
 			System.out.println("---Jadwal Tanggal Tayang---");
 			ps=con.prepareStatement("SELECT DISTINCT jadwal.Tanggal FROM jadwal LEFT JOIN Film ON Film.idFilm=jadwal.idFilm WHERE jadwal.idFilm=? ");
 			ps.setInt(1, pilihan);
 			ResultSet rsTanggal = ps.executeQuery();
-			int i=1;
+			int tanggalcount=0;
 			while(rsTanggal.next()) {
 			    SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");  
 			    String strDate = formatter.format(rsTanggal.getDate(1));
 			    tanggal.add(strDate);
-				System.out.println(i+". "+strDate);
-				i++;
+			    tanggalcount++;
+				System.out.println(tanggalcount+". "+strDate);
+				
 			}
-			System.out.print("Silahkan pilih tanggal tayang yang tersedia: ");
-			int tanggalPilihan=sc.nextInt();
-			
+			System.out.print("Silahkan pilih tanggal tayang yang tersedia (1-"+tanggalcount+"): ");
+			tanggalPilihan=sc.nextInt();
+			if(tanggalPilihan>tanggalcount||tanggalPilihan<1) {
+				while(tanggalPilihan>tanggalcount||tanggalPilihan<1) {
+					System.out.println("harap masukkan sesuai dengan pilihan yang tersedia");
+					System.out.print("Silahkan pilih tanggal tayang yang tersedia (1-"+tanggalcount+"): ");
+					tanggalPilihan=sc.nextInt();
+				}
+			}
+			int jamPilihan=0;
 			System.out.println("---Jadwal Jam Tayang---");
 			ps=con.prepareStatement("SELECT DISTINCT jadwal.Jam,jadwal.Studio FROM jadwal LEFT JOIN Film ON Film.idFilm=jadwal.idFilm WHERE jadwal.idFilm=? ");
 			ps.setInt(1, pilihan);
 			ResultSet rsJam = ps.executeQuery();
-			int j=1;
+			int jamcount=0;
 			while(rsJam.next()) {
 				jam.add(rsJam.getString(1));
-				System.out.println(j+". "+rsJam.getString(1)+"		Studio: "+rsJam.getInt(2));
-				j++;
+				jamcount++;
+				System.out.println(jamcount+". "+rsJam.getString(1)+"		Studio: "+rsJam.getInt(2));
+				
 			}
-			System.out.print("Silahkan pilih jam tayang yang tersedia: ");
-			int jamPilihan=sc.nextInt();
-			
+			System.out.print("Silahkan pilih jam tayang yang tersedia (1-"+jamcount+"): ");
+			jamPilihan=sc.nextInt();
+			if(jamPilihan>jamcount||jamPilihan<1) {
+				while(jamPilihan>jamcount||jamPilihan<1) {
+					System.out.println("harap masukkan sesuai dengan pilihan yang tersedia");
+					System.out.print("Silahkan pilih jam tayang yang tersedia (1-"+jamcount+"): ");
+					jamPilihan=sc.nextInt();
+				}
+			}
 			System.out.print("Masukkan jumlah tiket yang ingin anda beli: ");
 			int jumlahTiket=sc.nextInt();
 			sc.nextLine();
 			for(int z=0;z<jumlahTiket;z++) {
-				System.out.println("======Layar Bioskop======");
+				System.out.println("=============Layar Bioskop=============");
 				for(int q=0;q<kursi.size();q++) {
-					if(q%5==0) {
+					if(q%10==0) {
 						System.out.println();
 						System.out.print(kursi.get(q)+" ");
 					}else {
