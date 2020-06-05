@@ -1,5 +1,6 @@
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -8,12 +9,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 public class customerBiasa extends customer implements Serializable {
@@ -222,8 +225,14 @@ public class customerBiasa extends customer implements Serializable {
 					jamPilihan=sc.nextInt();
 				}
 			}
-			System.out.print("Masukkan jumlah tiket yang ingin anda beli: ");
-			int jumlahTiket=sc.nextInt();
+			int jumlahTiket;
+			do {
+				System.out.print("Masukkan jumlah tiket yang ingin anda beli: ");
+				jumlahTiket=sc.nextInt();
+				if(jumlahTiket<1) {
+					System.out.println("Minimal membeli 1 tiket");
+				}
+			}while(jumlahTiket<1);
 			sc.nextLine();
 			for(int z=0;z<jumlahTiket;z++) {
 				System.out.println("=============Layar Bioskop=============");
@@ -237,15 +246,45 @@ public class customerBiasa extends customer implements Serializable {
 				}
 				System.out.println();
 				
-				System.out.print("Silahkan pilih tempat duduk untuk tiket ke-"+(z+1)+": ");
-				String tempatduduk=sc.nextLine();
+				String tempatduduk;
+				ResultSet rsKursi;
+				do {
+					do {
+						System.out.print("Silahkan pilih tempat duduk untuk tiket ke-"+(z+1)+": ");
+						tempatduduk=sc.nextLine();
+
+						if(kursi.contains(tempatduduk)==false) {
+							System.out.println("Maaf, input anda tidak dapat diproses. Silahkan pilih kursi sesuai dengan pilihan yang tersedia");
+						}
+					}while(kursi.contains(tempatduduk)==false);
+					ps=con.prepareStatement("SELECT nomorKursi FROM `Transaksi` INNER JOIN kursi ON Transaksi.kodeTransaksi=kursi.kodeTransaksi WHERE idFilm=? AND tanggal=? AND jam=? AND kursi.nomorKursi=? ",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+					ps.setInt(1, pilihan);
+					ps.setString(2, tanggal.get(tanggalPilihan-1));
+					ps.setString(3, jam.get(jamPilihan-1));
+					ps.setString(4, tempatduduk);
+					rsKursi = ps.executeQuery();
+					if(rsKursi.next()==true) {
+						System.out.println("Maaf, kursi yang anda pilih sudah dipesan. Silahkan pilih kursi lainnya");
+					}else {
+						break;
+					}
+				}while(rsKursi!=null);
 				nomorKursi.add(tempatduduk);
 			}
 			double totalbayar = filmDipilih.getHarga()*jumlahTiket;
 			String formatTotal=df.format(totalbayar);
 			System.out.println("Total: Rp."+formatTotal);
-			System.out.print("Silahkan masukkan nominal sesuai dengan total bayar: Rp.");
-			double bayar=sc.nextDouble();
+			double bayar;
+			do {
+				System.out.print("Silahkan masukkan nominal sesuai dengan total bayar: Rp.");
+				bayar=sc.nextDouble();
+				if(bayar<totalbayar) {
+					System.out.println("Maaf, nominal uang yang anda masukkan tidak mencukupi. Silahkan bayar sesuai nominal yang tersedia");
+				}
+			}while(bayar<totalbayar);
+			if(bayar>totalbayar) {
+				System.out.println("Kembali: Rp."+df.format(bayar-totalbayar));
+			}
 			
 			DateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 			Date dateobj = new Date();
@@ -292,9 +331,16 @@ public class customerBiasa extends customer implements Serializable {
                 ps.executeUpdate();
                 w++;
             }
-            System.out.println("Tiket berhasil dibeli");
+            System.out.println("Transaksi berhasil. Silahkan pilih menu cetak tiket untuk mencetak tiket yang telah anda beli");
             
-		}catch(Exception e) {
+		}catch(InputMismatchException e) {
+			System.out.println("Maaf, kami tidak dapat memproses input anda silahkan masukkan pilihan sesuai dengan menu yang tersedia");
+			beliTiket();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
