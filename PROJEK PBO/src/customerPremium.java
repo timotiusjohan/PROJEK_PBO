@@ -218,7 +218,7 @@ public class customerPremium extends customer implements Serializable{
 						tempatduduk=sc.nextLine();
 
 						if(kursi.contains(tempatduduk)==false) {
-							System.out.println("Maaf, input anda tidak dapat diproses. Silahkan pilih kursi sesuai dengan pilihan yang tersedia");
+							System.out.println("Maaf, input anda tidak dapat diproses. Silahkan pilih kursi sesuai dengan pilihan yang tertera");
 						}
 					}while(kursi.contains(tempatduduk)==false);
 					ps=con.prepareStatement("SELECT nomorKursi FROM `Transaksi` INNER JOIN kursi ON Transaksi.kodeTransaksi=kursi.kodeTransaksi WHERE idFilm=? AND tanggal=? AND jam=? AND kursi.nomorKursi=? ",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);

@@ -279,7 +279,7 @@ public class customerBiasa extends customer implements Serializable {
 				System.out.print("Silahkan masukkan nominal sesuai dengan total bayar: Rp.");
 				bayar=sc.nextDouble();
 				if(bayar<totalbayar) {
-					System.out.println("Maaf, nominal uang yang anda masukkan tidak mencukupi. Silahkan bayar sesuai nominal yang tersedia");
+					System.out.println("Maaf, nominal uang yang anda masukkan tidak mencukupi. Silahkan bayar sesuai nominal yang tertera");
 				}
 			}while(bayar<totalbayar);
 			if(bayar>totalbayar) {
