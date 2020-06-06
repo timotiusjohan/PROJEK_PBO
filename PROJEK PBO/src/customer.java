@@ -98,7 +98,7 @@ public class customer implements Serializable {
         	String Email = sc.nextLine();
         	System.out.print("Password: ");
         	String Password = sc.nextLine();
-        	ps=con.prepareStatement("SELECT CustObject,idCustomer FROM Customer WHERE Email=? AND Password=?");
+        	ps=con.prepareStatement("SELECT CustObject,idCustomer FROM Customer WHERE BINARY Email=? AND Password=?");
         	ps.setString(1, Email);
         	ps.setString(2, Password);
         	ResultSet rs = ps.executeQuery();
