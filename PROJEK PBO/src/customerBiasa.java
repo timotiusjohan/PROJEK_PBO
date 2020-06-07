@@ -41,7 +41,7 @@ public class customerBiasa extends customer implements Serializable {
 			System.out.println("2. Upgrade Premium");
 			System.out.println("3. Cetak Tiket");
 			System.out.println("4. Logout");
-			System.out.print("Pilihan anda (1-3): ");
+			System.out.print("Pilihan anda (1-4): ");
 			int inputanMenu=sc.nextInt();
 			
 			if(inputanMenu==1) {
@@ -90,7 +90,7 @@ public class customerBiasa extends customer implements Serializable {
 			ps.setBinaryStream(2, bais, data.length);
 			ps.setInt(3, this.getIdCustomer());
 			ps.executeUpdate();
-			System.out.println("Anda telah berhasil upgrae menjadi premium. Silahkan login kembali untuk dapat menikmati akun premium anda");
+			System.out.println("Anda telah berhasil upgrade menjadi premium. Silahkan login kembali untuk dapat menikmati akun premium anda");
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
